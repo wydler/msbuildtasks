@@ -2,6 +2,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Microsoft.Build.Utilities;
 using Microsoft.Build.Framework;
@@ -85,6 +86,17 @@ namespace MSBuild.Community.Tasks
                 _quiet = value;
             }
         }
+
+        private string[] _defines;
+        /// <summary>
+        /// Set public defines
+        /// </summary>
+        /// <value>List of defines passed to the setup</value>
+        public string[] Defines
+        {
+            get { return _defines; }
+            set { _defines = value; }
+        }
         #endregion
 
         /// <summary>
@@ -149,6 +161,14 @@ namespace MSBuild.Community.Tasks
             if (string.IsNullOrEmpty(this._quiet) == false) {
                 if (this._quiet == "True") {
                     builder.AppendSwitch("/Q");
+                }
+            }
+
+            if (_defines != null && _defines.Any())
+            {
+                foreach (string define in _defines)
+                {
+                    builder.AppendSwitch(string.Concat("/D", define));
                 }
             }
 
